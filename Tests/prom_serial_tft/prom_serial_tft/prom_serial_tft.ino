@@ -70,7 +70,7 @@ while (mySerial.available()) {
         Serial.print(inData[3]);
         Serial.print(" ");
         //Serial.print(inData[4]);
-        tft.drawNumber(inData[3], 50, 50, 4);
+        tft.drawNumber(inData[3], 50, 20, 2);
         //Serial.print(" ");
         //Serial.print(inData[5]);
         //Serial.print(" ");
@@ -83,7 +83,7 @@ while (mySerial.available()) {
         //Serial.print(t);
         Serial.print(" ");
         Serial.print(ts,1);   
-        tft.drawFloat(ts, 1, 30, 80, 4);     
+        tft.drawFloat(ts, 1, 50, 80, 6);     
         Serial.println();   
       }
   }
