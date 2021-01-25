@@ -60,31 +60,11 @@ while (mySerial.available()) {
       if (index >= 9 ) {
           // call process function
           index = 0;
-          /*
-          Serial.print(inData[])
-          for (int i = 0; i < 9; i++) Serial.print(inData[i]);
-          Serial.println();
-          */
+          
           t = ((inData[7] << 8) + inData[6]) * 18;
           float ts = t/1000;
-        Serial.print(inData[3]);
-        Serial.print(" ");
-        //Serial.print(inData[4]);
-        tft.drawNumber(inData[3], 50, 20, 2);
-        //Serial.print(" ");
-        //Serial.print(inData[5]);
-        //Serial.print(" ");
-        Serial.print(inData[6]);
-        Serial.print(" ");
-        Serial.print(inData[7]);
-        Serial.print(" ");
-        Serial.print(inData[8]);
-        Serial.print(" ");
-        //Serial.print(t);
-        Serial.print(" ");
-        Serial.print(ts,1);   
-        tft.drawFloat(ts, 1, 50, 80, 6);     
-        Serial.println();   
+          tft.drawNumber(inData[3], 50, 20, 2);
+          tft.drawFloat(ts, 1, 50, 80, 6);     
       }
   }
   if (inData[3] == 160){
