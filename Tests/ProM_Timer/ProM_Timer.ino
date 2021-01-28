@@ -20,7 +20,7 @@
 
 // *** BEGIN OF CONFIG SECTION ***
 
-#define MACHINE_NAME      F("Super Jolly")
+#define MACHINE_NAME      F("ProM")
 
 const byte RELAY_PIN = 7;  // relay pin for controlling motor. pin 8 when using SPI, else change to D12.
 const bool ON = HIGH;    // pin state for acting relay as ON
@@ -149,117 +149,13 @@ static unsigned char hand1_bits[] U8G_PROGMEM  = {
   0x3f
 };
 
-void show(void (*content)()) {
-
-  display.firstPage();
-  do {
-    content();
-  } while (display.nextPage());
-}
-
-
-
-void splashScreen() {
-  display.setFont(u8g_font_fub14r); // u8g_font_fub17r?
-  display.drawStr((128 - display.getStrWidth(MACHINE_NAME)) / 2, 26, MACHINE_NAME);
-
-  char buffer[4]; // note: do not change to static declaration! this will not work within the picture loop of u8glib
-  buffer[0] = 'v';
-  buffer[1] = '.';
-  buffer[2] = toChar((EEPROM_VALUE_VERSION));
-  buffer[3] = '\0';
-  display.drawStr((128 - display.getStrWidth(buffer)) / 2, 60, buffer);
-}
-
-void resetText() {
-  display.drawStr((128 - display.getStrWidth(F("RESET"))) / 2, 26, F("RESET"));
-
-  //Serial.println("Reset");
-}
-
-char toChar(byte val) {
-  return '0' + val;
-}
-
-void actualTime() {
-
-  if (inSetupMode) {
-    float ct = currentTime/10;
-    display.setPrintPos(0, 60);
-    display.print("SET=");
-    display.setPrintPos(60, 60);
-    display.print(currentTime );
-    display.print("s");
-
-  }
-  else {
-      display.setPrintPos(60, 60);
-      display.print(ts,1);
-      display.print("s");
-  }
-  
-
-
-}
-
-void actualMenu() {
-  if (menu == ADD_GRINDING) {
-    display.drawXBMP( 0, 0, hand1_width, hand1_height, hand1_bits);
-  }
-  else {
-    display.drawXBMP( 0, 0, bean1_width, bean1_height, bean1_bits);
-    if (menu == DOSE2) {
-      display.drawXBMP( 40, 0, bean1_width, bean1_height, bean1_bits);
-    }
-  }
-
-  actualTime();
-
-}
 
 // *** END of UI handling
 
 
-// heartbeat, response
-void sendHeartbeat() {
-  mySerial.write(240);
-  mySerial.write(1);
-  mySerial.write(6);
-  mySerial.write(9);
-}
 
 
-void sendTime() {
-  //'240','6','12','1','0','0','231','3','19'
-  // die Summe von byte4 + byte5 + byte6 + byte7 + byte8 + byte9 = 254
-  // byte9 ist die "Prüfsumme" byte9 = 254 - (byte4 + byte5 + byte6 + byte7 + byte8)
-  // currentTime /18 *1000
-  int cTime = ((currentTime * 100) / 18) + 1;
-  byte byte7 = lowByte(cTime);
-  byte byte8 = highByte(cTime);
-  byte byte9 = (253 - byte8 - byte7);
 
-  Serial.print(byte7);
-  Serial.print(" ");
-  Serial.print(byte8);
-  Serial.print(" ");
-  Serial.print(byte9);
-  Serial.print(" ");
-  Serial.print(cTime);
-  Serial.print(" ");
-  Serial.println(currentTime, 1);
-
-
-  mySerial.write(240);
-  mySerial.write(6);
-  mySerial.write(12);
-  mySerial.write(1);
-  mySerial.write((byte)0);
-  mySerial.write((byte)0);
-  mySerial.write(byte7);
-  mySerial.write(byte8);
-  mySerial.write(byte9);
-}
 
 
 void setup() {
