@@ -1,5 +1,14 @@
 #include <SoftwareSerial.h>
-SoftwareSerial mySerial(2,3, true);  // RX, TX, 
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+#include <SPI.h>
+
+#define SCREEN_WIDTH 128 // OLED display width, in pixels
+#define SCREEN_HEIGHT 64 // OLED display height, in pixels
+
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
+SoftwareSerial mySerial(2, 3, true);  // RX, TX, 
 
 byte inData[15];
 int index= -1;
@@ -13,9 +22,23 @@ const long interval = 50;
 bool sendT=0;
 
 void setup() {
-    Serial.begin(19200);
-    mySerial.begin(19200);
-    
+  mySerial.begin(19200);
+
+  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
+    Serial.println(F("SSD1306 allocation failed"));
+    for(;;);
+  }
+  delay(2000);
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(0, 10);
+  // Display static text
+  display.println("Hello, ProM!");
+  display.display(); 
+  delay(7000);
+  display.clearDisplay();
+  display.display();    
 }
 
 void loop() {
@@ -28,7 +51,6 @@ while (mySerial.available()) {
 //      Serial.println("start of msg");
       index = 0;
       memset(inData,0,sizeof(inData));
-
   }
 
   if (index>=0) {
@@ -37,32 +59,23 @@ while (mySerial.available()) {
       if (index >= 9 ) {
           // call process function
           index = 0;
-          /*
-          Serial.print(inData[])
-          for (int i = 0; i < 9; i++) Serial.print(inData[i]);
-          Serial.println();
-          */
+          
           t = ((inData[7] << 8) + inData[6]) * 18;
           float ts = t/1000;
-        Serial.print(inData[3]);
-        Serial.print(" ");
-        //Serial.print(inData[4]);
-        //Serial.print(" ");
-        //Serial.print(inData[5]);
-        //Serial.print(" ");
-        Serial.print(inData[6]);
-        Serial.print(" ");
-        Serial.print(inData[7]);
-        Serial.print(" ");
-        Serial.print(inData[8]);
-        Serial.print(" ");
-        //Serial.print(t);
-        Serial.print(" ");
-        Serial.print(ts,1);        
-        Serial.println();   
+          display.setCursor(0, 10);
+          display.print(inData[3]);
+          display.display();
+          display.setCursor(0, 30);
+          display.print(ts);  
+          display.display();   
       }
   }
+  if (inData[3] == 160){
+    sendTime();
+    display.clearDisplay();
+  }
 }
+
 
 unsigned long currentMillis = millis();
 
@@ -98,7 +111,7 @@ void sendTime() {
   mySerial.write(1);
   mySerial.write((byte)0);
   mySerial.write((byte)0);
-  mySerial.write(231);
-  mySerial.write(3);
-  mySerial.write(19);
+  mySerial.write(31);
+  mySerial.write(1);
+  mySerial.write(221);
 }
