@@ -22,19 +22,22 @@ void readSettings() {
     // dose time values
     doseTime[DOSE1] = EEPROM.read(DOSE1);
     doseTime[DOSE2] = EEPROM.read(DOSE2);
+    doseTime[DOSE3] = EEPROM.read(DOSE3);
 
     // menu
-    menu = EEPROM.read(3);
+    menu = EEPROM.read(4);
   }
   else {
     // first time init
-    doseTime[DOSE1] = 55;
+    doseTime[DOSE1] = 11;
     EEPROM.write(DOSE1, doseTime[DOSE1]);
-    doseTime[DOSE2] = 93;
+    doseTime[DOSE2] = 22;
     EEPROM.write(DOSE2, doseTime[DOSE2]);
+    doseTime[DOSE3] = 33;
+    EEPROM.write(DOSE3, doseTime[DOSE3]);
 
     menu = DOSE1;
-    EEPROM.write(3, menu);
+    EEPROM.write(4, menu);
 
     EEPROM.write(0, EEPROM_VALUE_VERSION);
   }

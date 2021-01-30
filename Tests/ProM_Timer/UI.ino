@@ -34,16 +34,20 @@ char toChar(byte val) {
 void actualTime() {
 
   if (inSetupMode) {
-    float ct = currentTime/10;
-    display.setPrintPos(0, 60);
-    display.print("SET=");
-    display.setPrintPos(60, 60);
-    display.print(currentTime );
+    float tt = currentTime;
+    float ct = tt/10;
+    display.drawBox(0, 44, 128, 40);
+    display.setColorIndex(0);
+    //display.setPrintPos(0, 60);
+    //display.print("SET=");
+    display.setPrintPos(40, 60);
+    display.print(ct,1 );
     display.print("s");
+    display.setColorIndex(1);
 
   }
   else {
-      display.setPrintPos(60, 60);
+      display.setPrintPos(40, 60);
       display.print(ts,1);
       display.print("s");
   }
@@ -53,14 +57,14 @@ void actualTime() {
 }
 
 void actualMenu() {
-  if (menu == ADD_GRINDING) {
-    display.drawXBMP( 0, 0, hand1_width, hand1_height, hand1_bits);
+  if (menu == DOSE1) {
+    display.drawXBMP( 50, 4, cup_width, cup_height, cup);
   }
-  else {
-    display.drawXBMP( 0, 0, bean1_width, bean1_height, bean1_bits);
-    if (menu == DOSE2) {
-      display.drawXBMP( 40, 0, bean1_width, bean1_height, bean1_bits);
-    }
+  else if(menu == DOSE2){ 
+    display.drawXBMP( 50, 4, cups_width, cups_height, cups);
+  }  
+  else if (menu == DOSE3) {
+      display.drawXBMP( 35, 15, portalfilter_width, portalfilter_height, portalfilter);
   }
 
   actualTime();
