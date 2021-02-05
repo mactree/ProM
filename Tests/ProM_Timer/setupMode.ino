@@ -9,5 +9,6 @@ void handleSetupMode() {
     // get new values
     doseTime[menu] = currentTime;
     EEPROM.write(menu, currentTime);
+    sendTime();
   }
 }

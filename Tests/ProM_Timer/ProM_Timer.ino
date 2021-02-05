@@ -33,7 +33,7 @@ const byte ENCODER_B_PIN = 3;
 const byte SELECT_BTN_PIN = 4; // pin to use as SELECT button (D4). Might be button of encoder switch
 
 // Softserial
-SoftwareSerial mySerial(5, 6, true);  // RX, TX,
+SoftwareSerial mySerial(6, 5, true);  // RX, TX,
 
 // *** END OF CONFIG SECTION ***
 
@@ -86,7 +86,7 @@ static bool rotating = false;
 unsigned long previousMillis = 0;
 const long interval = 50;
 
-byte inData[15];
+byte inData[10];
 int index = -1;
 byte iByte;
 float t = 0;
@@ -178,7 +178,7 @@ void setup() {
   attachInterrupt(0, doEncoderA, CHANGE);
   attachInterrupt(1, doEncoderB, CHANGE);
 
-  Serial.begin(9600);
+  //Serial.begin(9600);
   mySerial.begin(19200);
 
   // set display rotation
@@ -237,13 +237,14 @@ void loop() {
         Serial.print(" ");
         Serial.println(ts, 1);
         
-
+        show(actualMenu);
         //tft.drawNumber(inData[3], 50, 20, 2);
         //tft.drawFloat(ts, 1, 50, 80, 6);
       }
     }
     if (inData[3] == 160) {
       sendTime();
+      show(actualMenu);
       //tft.fillScreen(TFT_BLACK);
     }
   }
