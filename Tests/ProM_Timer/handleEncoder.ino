@@ -23,7 +23,7 @@ void encoderChanged(bool addValue) {
         menu = DOSE3;
       }
     }
-    EEPROM.write(3, menu);
+    EEPROM.write(4, menu);
     currentTime = doseTime[menu];
     sendTime();
   }
