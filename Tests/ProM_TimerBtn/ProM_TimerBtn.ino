@@ -63,8 +63,9 @@ unsigned long lastIdleTime;
 
 volatile byte menu = DOSE2;
 volatile byte currentTime = 0;
-volatile long lastbuttonTime;
+volatile long lastButtonTime;
 bool inSetupMode = false;
+bool inSleep = false;
 bool doublePress = false;
 // interrupt service routine vars
 bool A_set = false;
@@ -148,8 +149,8 @@ void setup() {
   pinMode(SELECT_PIN, INPUT);
   pinMode(INCDOSE_PIN, INPUT);
   pinMode(DECDOSE_PIN, INPUT);
-  display.setContrast(200);
-
+  display.setContrast(50);
+  Serial.begin(19200);
   mySerial.begin(19200);
 
   // set display rotation
@@ -182,9 +183,14 @@ void loop() {
   if (currentMillis - previousMillis >= interval) {
     // save the last time you blinked the LED
     previousMillis = currentMillis;
-
     sendHeartbeat();
   }
+  if (currentMillis - lastButtonTime >= SCREEN_ON_TIME){
+    display.sleepOn(); 
+    inSleep = true;
+  }
+
+  
   while (mySerial.available()) {
     byte iByte = mySerial.read();
 
@@ -192,7 +198,6 @@ void loop() {
       //      Serial.println("start of msg");
       index = 0;
       memset(inData, 0, sizeof(inData));
-
     }
 
     if (index >= 0) {

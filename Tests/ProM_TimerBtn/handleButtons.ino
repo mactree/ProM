@@ -6,7 +6,12 @@ byte handleButton() {
   bool buttonNowPressed = digitalRead(SELECT_PIN); // pin low -> pressed
 
   if (buttonNowPressed) {
-    lastbuttonTime = millis();
+    lastButtonTime = millis();
+    if (inSleep){//wake up, skip button action
+      display.sleepOff();
+      inSleep = false;
+      return BTN_NONE;
+    }
     if (!buttonWasPressed) {
       longButtonPressedTime = millis() + LONGPRESS_TIME;
       buttonWasPressed = true;
@@ -27,24 +32,37 @@ byte handleButton() {
 }
 
 
-bool handleDoseButtons(){
+void handleDoseButtons(){
   if (digitalRead(INCDOSE_PIN)&& digitalRead(DECDOSE_PIN)){ // prevent double button press
     doublePress = true;
     doubleErr();
-    lastbuttonTime = millis();
+    lastButtonTime = millis();
   }
   else {
     doublePress = false;
   }
 
   if (digitalRead(INCDOSE_PIN)){
+    if (inSleep){//wake up, skip button action
+      display.sleepOff();
+      inSleep = false;
+      lastButtonTime = millis(); 
+      return;
+    }
     currentTime += 2;  
-    lastbuttonTime = millis();  
+    lastButtonTime = millis(); 
   }
   if (digitalRead(DECDOSE_PIN)){
+     if (inSleep){ //wake up, skip button action
+      display.sleepOff();
+      inSleep = false;
+      lastButtonTime = millis(); 
+      return;
+    }
     currentTime -= 2; 
-    lastbuttonTime = millis();
+    lastButtonTime = millis();
   }
   EEPROM.write(menu, currentTime);
   sendTime();
+  return;
 }
