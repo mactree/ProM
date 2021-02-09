@@ -49,7 +49,7 @@ void actualTime() {
   else {
     float tt = currentTime;
     float ct = tt/10;
-    display.setPrintPos(40, 60);
+    display.setPrintPos(53, 45);
     //display.print(ts,1);  //test only
     display.print(ct,1);
     display.print("s");
@@ -61,19 +61,29 @@ void actualTime() {
 
 void actualMenu() {
   if (menu == DOSE1) {
-    display.drawXBMP( 50, 4, cup_width, cup_height, cup);
+    display.drawXBMP( 50, 0, cup_width, cup_height, cup);
   }
   else if(menu == DOSE2){ 
-    display.drawXBMP( 50, 4, cups_width, cups_height, cups);
+    display.drawXBMP( 50, 0, cups_width, cups_height, cups);
   } 
-  /* Button id print at bottom
-  display.setPrintPos(0, 60);
-  display.print("-"); 
-  display.setPrintPos(60, 60);
+  // Show button names at bottom in box
+  display.setFont(u8g_font_helvB08);
+  //display.drawBox(3, 55, 128, 10); one box
+  //display.drawBox(0,51,35,13);
+  display.drawBox(44,51,35,13);
+  //display.drawBox(91,51,35,13);
+  display.drawDisc(16,57,4);
+  display.drawDisc(107,57,4);
+  display.setColorIndex(0);
+  display.setPrintPos(48, 61);
   display.print("Shots"); 
-  display.setPrintPos(120,60);
+  display.setPrintPos(14, 61);
+  display.print("-"); 
+  display.setPrintPos(105,61);
   display.print("+");
-  */
+  display.setColorIndex(1);
+  
+  display.setFont(u8g_font_fub14r);
   
   actualTime();
 
