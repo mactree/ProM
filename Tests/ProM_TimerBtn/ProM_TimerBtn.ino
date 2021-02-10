@@ -168,6 +168,7 @@ void setup() {
 //  MsTimer2::start();
 
   lastIdleTime = millis() + 1000;
+  sendTime();
 }
 
 void loop() {
@@ -209,8 +210,9 @@ void loop() {
 
         t = ((inData[7] << 8) + inData[6]) * 18;
         ts = t / 1000;
-        Serial.print(inData[6]);
-        Serial.print(" ");
+        //Serial.print(inData[6]);
+        //Serial.print(" ");
+        Serial.print("MachineTime: ");
         Serial.println(ts, 1);
         
 
@@ -220,7 +222,6 @@ void loop() {
     }
     if (inData[3] == 160) {
       sendTime();
-      //tft.fillScreen(TFT_BLACK);
     }
   }
 
@@ -252,10 +253,12 @@ void loop() {
     if (menu == DOSE1){
       menu = DOSE2;
       currentTime = EEPROM.read(menu);
+      sendTime();
     }
     else if (menu == DOSE2){
       menu = DOSE1;
       currentTime = EEPROM.read(menu);
+      sendTime();
     }
     show(actualMenu);
   }

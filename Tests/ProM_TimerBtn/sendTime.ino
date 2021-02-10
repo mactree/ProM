@@ -7,7 +7,7 @@ void sendTime() {
   byte byte7 = lowByte(cTime);
   byte byte8 = highByte(cTime);
   byte byte9 = (253 - byte8 - byte7);
-
+  Serial.print("sendTime: ");
   Serial.print(byte7);
   Serial.print(" ");
   Serial.print(byte8);

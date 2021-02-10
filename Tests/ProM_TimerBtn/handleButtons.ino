@@ -10,6 +10,7 @@ byte handleButton() {
     if (inSleep){//wake up, skip button action
       display.sleepOff();
       inSleep = false;
+      sendTime(); //make sure time is updated
       return BTN_NONE;
     }
     if (!buttonWasPressed) {
@@ -46,23 +47,26 @@ void handleDoseButtons(){
     if (inSleep){//wake up, skip button action
       display.sleepOff();
       inSleep = false;
+      sendTime(); //make sure time is updated
       lastButtonTime = millis(); 
       return;
     }
     currentTime += 2;  
     lastButtonTime = millis(); 
+    sendTime();
   }
   if (digitalRead(DECDOSE_PIN)){
      if (inSleep){ //wake up, skip button action
       display.sleepOff();
       inSleep = false;
+      sendTime(); //make sure time is updated
       lastButtonTime = millis(); 
       return;
     }
     currentTime -= 2; 
     lastButtonTime = millis();
+    sendTime();
   }
   EEPROM.write(menu, currentTime);
-  sendTime();
   return;
 }

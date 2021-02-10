@@ -40,7 +40,7 @@ void actualTime() {
     display.setColorIndex(0);
     //display.setPrintPos(0, 60);
     //display.print("SET=");
-    display.setPrintPos(40, 60);
+    display.setPrintPos(53, 45);
     display.print(ct,1 );
     display.print("s");
     display.setColorIndex(1);
@@ -49,7 +49,7 @@ void actualTime() {
   else {
     float tt = currentTime;
     float ct = tt/10;
-    display.setPrintPos(40, 60);
+    display.setPrintPos(53, 47);
     //display.print(ts,1);  //test only
     display.print(ct,1);
     display.print("s");
@@ -61,22 +61,35 @@ void actualTime() {
 
 void actualMenu() {
   if (menu == DOSE1) {
-    display.drawXBMP( 50, 4, cup_width, cup_height, cup);
+    display.drawXBMP( 50, 0, cup_width, cup_height, cup);
   }
   else if(menu == DOSE2){ 
-    display.drawXBMP( 50, 4, cups_width, cups_height, cups);
+    display.drawXBMP( 50, 0, cups_width, cups_height, cups);
   } 
-  /* Button id print at bottom
-  display.setPrintPos(0, 60);
-  display.print("-"); 
-  display.setPrintPos(60, 60);
-  display.print("Shots"); 
-  display.setPrintPos(120,60);
-  display.print("+");
-  */
-  
+
+  buttonUI();
   actualTime();
 
+}
+
+void buttonUI(){
+    // Show button names at bottom in box
+  display.setFont(u8g_font_7x13B);
+  //display.drawBox(3, 55, 128, 10); one box
+  //display.drawBox(0,51,35,13);
+  display.drawBox(48,51,35,13);
+  //display.drawBox(91,51,35,13);
+  display.drawDisc(16,57,5);
+  display.drawDisc(107,57,5);
+  display.setColorIndex(0);
+  display.setPrintPos(48, 61);
+  display.print("Shots"); 
+  display.setPrintPos(13, 62);
+  display.print("-"); 
+  display.setPrintPos(104,62);
+  display.print("+");
+  display.setColorIndex(1);  
+  display.setFont(u8g_font_fub14r);
 }
 
 void doubleErr(){

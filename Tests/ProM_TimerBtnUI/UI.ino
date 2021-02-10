@@ -66,7 +66,14 @@ void actualMenu() {
   else if(menu == DOSE2){ 
     display.drawXBMP( 50, 0, cups_width, cups_height, cups);
   } 
-  // Show button names at bottom in box
+
+  buttonUI();  
+  actualTime();
+
+}
+
+void buttonUI(){
+    // Show button names at bottom in box
   display.setFont(u8g_font_helvB08);
   //display.drawBox(3, 55, 128, 10); one box
   //display.drawBox(0,51,35,13);
@@ -81,12 +88,8 @@ void actualMenu() {
   display.print("-"); 
   display.setPrintPos(105,61);
   display.print("+");
-  display.setColorIndex(1);
-  
+  display.setColorIndex(1);  
   display.setFont(u8g_font_fub14r);
-  
-  actualTime();
-
 }
 
 void doubleErr(){
