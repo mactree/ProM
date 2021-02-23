@@ -1,14 +1,18 @@
 void checkSettings() {
-  int requestReset = digitalRead(SELECT_PIN);
+  int requestReset = !digitalRead(SELECT_PIN);
   delay(2000);
-  int stillRequestReset = digitalRead(SELECT_PIN);
+  int stillRequestReset = !digitalRead(SELECT_PIN);
 
   if (requestReset && stillRequestReset) {
     show(resetText);
+    
+  // clear EEPROM
+  for (int i = 0 ; i < EEPROM.length() ; i++) {
+    if (i==DOSECNT) i++; //never erase mill counter
+    EEPROM.write(i, 0);
+  }
 
-    EEPROM.write(0, 0);
-
-    while (digitalRead(SELECT_PIN)) // wait and proceed only when key is released
+    while (!digitalRead(SELECT_PIN)) // wait and proceed only when key is released
       ;
   }
 
@@ -22,6 +26,8 @@ void readSettings() {
     // dose time values
     doseTime[DOSE1] = EEPROM.read(DOSE1);
     doseTime[DOSE2] = EEPROM.read(DOSE2);
+    doseTime[DOSE3] = EEPROM.read(DOSE3);
+    doseCounter = EEPROM.read(DOSECNT);
   }
   else {
     // first time init

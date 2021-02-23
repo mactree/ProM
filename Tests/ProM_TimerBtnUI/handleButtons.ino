@@ -3,7 +3,7 @@ byte handleButton() {
   static bool longButtonPress;
   static unsigned long longButtonPressedTime; // press running duration
 
-  bool buttonNowPressed = digitalRead(SELECT_PIN); // pin low -> pressed
+  bool buttonNowPressed = !digitalRead(SELECT_PIN); // pin low -> pressed
 
   if (buttonNowPressed) {
     lastButtonTime = millis();
@@ -33,7 +33,7 @@ byte handleButton() {
 
 
 void handleDoseButtons(){
-  if (digitalRead(INCDOSE_PIN)&& digitalRead(DECDOSE_PIN)){ // prevent double button press
+  if (!digitalRead(INCDOSE_PIN)&& !digitalRead(DECDOSE_PIN)){ // prevent double button press
     doublePress = true;
     doubleErr();
     lastButtonTime = millis();
@@ -42,7 +42,7 @@ void handleDoseButtons(){
     doublePress = false;
   }
 
-  if (digitalRead(INCDOSE_PIN)){
+  if (!digitalRead(INCDOSE_PIN)){
     if (inSleep){//wake up, skip button action
       display.sleepOff();
       inSleep = false;
@@ -52,7 +52,7 @@ void handleDoseButtons(){
     currentTime += 2;  
     lastButtonTime = millis(); 
   }
-  if (digitalRead(DECDOSE_PIN)){
+  if (!digitalRead(DECDOSE_PIN)){
      if (inSleep){ //wake up, skip button action
       display.sleepOff();
       inSleep = false;

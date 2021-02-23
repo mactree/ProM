@@ -36,6 +36,8 @@ SoftwareSerial mySerial(2, 3, true);  // RX, TX,
 
 #define DOSE1                  1
 #define DOSE2                  2
+#define DOSE3                  3
+#define DOSECNT                4
 
 U8GLIB_SSD1306_128X64 display(U8G_I2C_OPT_NONE);        // I2C / TWI SCA=a4, SCL=a5 , U8G_I2C_OPT_NONE U8G_I2C_OPT_FAST
 //U8GLIB_SSD1306_128X64 display(U8G_PIN_NONE /*cs*/, 9 /*a0*/, 8 /*reset*/); // SPI HW: cs=10, a0=9, RST=8, MOSI=11, SCK=13 (note: some modules lack cs)
@@ -55,7 +57,8 @@ U8GLIB_SSD1306_128X64 display(U8G_I2C_OPT_NONE);        // I2C / TWI SCA=a4, SCL
 */
 
 #define LONGPRESS_TIME    2000  // 2s for a long press
-#define SCREEN_ON_TIME  60000   //10s for testing, should be changed to >2mins later
+#define SCREEN_ON_TIME  120000   //10s for testing, should be changed to >2mins later
+#define MILL_TIME        30000  //30s for mill in case of dose amount adjustment, 
 enum { BTN_NONE = 0, BTN_SHORTPRESS, BTN_LONGPRESS };
 
 
@@ -70,9 +73,11 @@ bool doublePress = false;
 // interrupt service routine vars
 bool A_set = false;
 bool B_set = false;
+int doseCounter = 0;
 
 
 unsigned long previousMillis = 0;
+unsigned long millTimer = 0;
 const long interval = 50;
 
 byte inData[15];
@@ -146,9 +151,9 @@ static unsigned char portalfilter[] U8G_PROGMEM = {
 
 
 void setup() {
-  pinMode(SELECT_PIN, INPUT);
-  pinMode(INCDOSE_PIN, INPUT);
-  pinMode(DECDOSE_PIN, INPUT);
+  pinMode(SELECT_PIN, INPUT_PULLUP);
+  pinMode(INCDOSE_PIN, INPUT_PULLUP);
+  pinMode(DECDOSE_PIN, INPUT_PULLUP);
   display.setContrast(5);
   Serial.begin(9600);
   mySerial.begin(19200);
@@ -163,6 +168,8 @@ void setup() {
   currentTime = doseTime[menu];
   show(actualMenu);
 
+
+
   // setup timer
 //  MsTimer2::set(100, updateRelayState);  // period to check relay state: every 100ms
 //  MsTimer2::start();
@@ -176,7 +183,7 @@ void loop() {
   // handle button
   byte btnEvent = handleButton();
   handleDoseButtons();
-  show(actualMenu);
+  inSetupMode ? show(setupMenu): show(actualMenu);
 
   unsigned long currentMillis = millis();
 
@@ -222,6 +229,15 @@ void loop() {
       sendTime();
       //tft.fillScreen(TFT_BLACK);
     }
+    if (inData[3] == 167){ // grinder running
+      currentTime = ts*10; //now want to show reduced time.
+      show(actualTime); //TODO: TEST
+      if(currentMillis - millTimer > MILL_TIME) { // Only increase doseCounter in 30s intervals to avoid increase counter on short btn press
+      millTimer = currentMillis;
+      doseCounter ++;
+      EEPROM.write(4, doseCounter);
+      }
+    }
   }
 
 
@@ -246,7 +262,7 @@ void loop() {
   }
   else if ((btnEvent == BTN_LONGPRESS)) {//Setup Mode to be activated
     handleSetupMode();
-    show(actualMenu);
+    show(setupMenu);
   }
   else if ((btnEvent == BTN_SHORTPRESS)) {//Toggle Dose Single - Double
     if (menu == DOSE1){
@@ -257,7 +273,7 @@ void loop() {
       menu = DOSE1;
       currentTime = EEPROM.read(menu);
     }
-    show(actualMenu);
+    inSetupMode ? show(setupMenu): show(actualMenu);
   }
   /*
   else if (!inSetupMode && currentTime == 0 && menu != ADD_GRINDING) {

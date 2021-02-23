@@ -10,7 +10,8 @@ void show(void (*content)()) {
 
 
 void splashScreen() {
-  display.setFont(u8g_font_fub14r); // u8g_font_fub17r?
+  display.setFont(u8g_font_fub17);
+  //display.setFont(u8g_font_fub14r); // u8g_font_fub17r?
   display.drawStr((128 - display.getStrWidth(MACHINE_NAME)) / 2, 26, MACHINE_NAME);
 
   char buffer[4]; // note: do not change to static declaration! this will not work within the picture loop of u8glib
@@ -32,39 +33,29 @@ char toChar(byte val) {
 }
 
 void actualTime() {
+  //display.setFont(u8g_font_helvB18); //TODO Remove letters from lib!
+  display.setFont(u8g_font_fub17);
+  float tt = currentTime;
+  float ct = tt/10;
+  display.setPrintPos(67, 28);
+  //display.print(ts,1);  //test only
+  display.print(ct,1);
+  display.print("s");
+}
 
-  if (inSetupMode) {
-    float tt = currentTime;
-    float ct = tt/10;
-    display.drawBox(0, 44, 128, 40);
-    display.setColorIndex(0);
-    //display.setPrintPos(0, 60);
-    //display.print("SET=");
-    display.setPrintPos(40, 60);
-    display.print(ct,1 );
-    display.print("s");
-    display.setColorIndex(1);
-
-  }
-  else {
-    float tt = currentTime;
-    float ct = tt/10;
-    display.setPrintPos(53, 45);
-    //display.print(ts,1);  //test only
-    display.print(ct,1);
-    display.print("s");
-  }
-  
-
-
+void setupMenu() {  //Show Dose Counter! REVERT BACK and PAINT BOX OVER CUPS
+      display.setFont(u8g_font_fub14);
+      display.drawStr((128 - display.getStrWidth(F("Mahlcounter"))) / 2, 26, F("Mahlcounter"));
+      display.setPrintPos(46,52);
+      display.print(doseCounter);
 }
 
 void actualMenu() {
   if (menu == DOSE1) {
-    display.drawXBMP( 50, 0, cup_width, cup_height, cup);
+    display.drawXBMP( 17, 9, cup_width, cup_height, cup);
   }
   else if(menu == DOSE2){ 
-    display.drawXBMP( 50, 0, cups_width, cups_height, cups);
+    display.drawXBMP( 12, 4, cups_width, cups_height, cups);
   } 
 
   buttonUI();  
@@ -72,24 +63,33 @@ void actualMenu() {
 
 }
 
-void buttonUI(){
-    // Show button names at bottom in box
-  display.setFont(u8g_font_helvB08);
-  //display.drawBox(3, 55, 128, 10); one box
-  //display.drawBox(0,51,35,13);
-  display.drawBox(44,51,35,13);
-  //display.drawBox(91,51,35,13);
-  display.drawDisc(16,57,4);
-  display.drawDisc(107,57,4);
-  display.setColorIndex(0);
+void buttonUI(){ //Show button tags at bottom of display
+  display.setFont(u8g_font_tpssb);
+  display.drawDisc(9,56,7);
+  display.drawDisc(117,56,7);
+  display.drawHLine(0, 43,128);
   display.setPrintPos(48, 61);
   display.print("Shots"); 
-  display.setPrintPos(14, 61);
+  display.setColorIndex(0);
+  display.setFont(u8g_font_fub17);
+  display.setPrintPos(4, 63);
   display.print("-"); 
-  display.setPrintPos(105,61);
+  display.setPrintPos(7, 62);
+  display.print("-"); 
+  display.setPrintPos(4, 62);
+  display.print("-"); 
+  display.setPrintPos(7, 63);
+  display.print("-"); 
+  display.setFont(u8g_font_fub14);
+  display.setPrintPos(107,62);
+  display.print("+");
+  display.setPrintPos(107,63);
+  display.print("+");
+  display.setPrintPos(108,62);
+  display.print("+");
+  display.setPrintPos(108,63);
   display.print("+");
   display.setColorIndex(1);  
-  display.setFont(u8g_font_fub14r);
 }
 
 void doubleErr(){
