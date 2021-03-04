@@ -20,6 +20,7 @@ byte handleButton() {
       longButtonPress = true;
       return BTN_LONGPRESS;
     }
+    return BTN_CONTPRESS;
   }
   else if (buttonWasPressed) {
     buttonWasPressed = false;
@@ -27,6 +28,7 @@ byte handleButton() {
     if (millis() < longButtonPressedTime)
       return BTN_SHORTPRESS;
   }
+  
 
   return BTN_NONE;
 }
@@ -51,6 +53,7 @@ void handleDoseButtons(){
     }
     currentTime += 2;  
     lastButtonTime = millis(); 
+    sendTime();
   }
   if (!digitalRead(DECDOSE_PIN)){
      if (inSleep){ //wake up, skip button action
@@ -61,8 +64,8 @@ void handleDoseButtons(){
     }
     currentTime -= 2; 
     lastButtonTime = millis();
+    sendTime();
   }
   EEPROM.write(menu, currentTime);
-  sendTime();
   return;
 }

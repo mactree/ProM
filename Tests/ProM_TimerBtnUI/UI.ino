@@ -10,16 +10,7 @@ void show(void (*content)()) {
 
 
 void splashScreen() {
-  display.setFont(u8g_font_fub17);
-  //display.setFont(u8g_font_fub14r); // u8g_font_fub17r?
-  display.drawStr((128 - display.getStrWidth(MACHINE_NAME)) / 2, 26, MACHINE_NAME);
-
-  char buffer[4]; // note: do not change to static declaration! this will not work within the picture loop of u8glib
-  buffer[0] = 'v';
-  buffer[1] = '.';
-  buffer[2] = toChar((EEPROM_VALUE_VERSION));
-  buffer[3] = '\0';
-  display.drawStr((128 - display.getStrWidth(buffer)) / 2, 60, buffer);
+    display.drawXBMP( 0, 0, logo_width, logo_height, logo);
 }
 
 void resetText() {
@@ -35,7 +26,13 @@ char toChar(byte val) {
 void actualTime() {
   //display.setFont(u8g_font_helvB18); //TODO Remove letters from lib!
   display.setFont(u8g_font_fub17);
-  float tt = currentTime;
+  float tt = 0;
+  if(grindRunning) {
+    tt = grindTime;
+  }
+  else{
+    tt = currentTime;
+  }
   float ct = tt/10;
   display.setPrintPos(67, 28);
   //display.print(ts,1);  //test only
@@ -45,8 +42,8 @@ void actualTime() {
 
 void setupMenu() {  //Show Dose Counter! REVERT BACK and PAINT BOX OVER CUPS
       display.setFont(u8g_font_fub14);
-      display.drawStr((128 - display.getStrWidth(F("Mahlcounter"))) / 2, 26, F("Mahlcounter"));
-      display.setPrintPos(46,52);
+      display.drawStr((128 - display.getStrWidth(F("Grind Count:"))) / 2, 26, F("Grind Count:"));
+      display.setPrintPos(20,52);
       display.print(doseCounter);
 }
 
