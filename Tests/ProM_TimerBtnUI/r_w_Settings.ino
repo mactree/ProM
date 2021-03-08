@@ -8,7 +8,7 @@ void checkSettings() {
     
   // clear EEPROM
   for (int i = 0 ; i < EEPROM.length() ; i++) {
-    if (i==DOSECNT) i++; //never erase mill counter
+    //if (i==DOSECNT) i++; //never erase mill counter
     EEPROM.write(i, 0);
   }
 

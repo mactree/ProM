@@ -7,16 +7,16 @@ void sendTime() {
   byte byte7 = lowByte(cTime);
   byte byte8 = highByte(cTime);
   byte byte9 = (253 - byte8 - byte7);
-
-  Serial.print(byte7);
-  Serial.print(" ");
-  Serial.print(byte8);
-  Serial.print(" ");
-  Serial.print(byte9);
-  Serial.print(" ");
-  Serial.print(cTime);
-  Serial.print(" ");
-  Serial.println(currentTime, 1);
+//
+//  Serial.print(byte7);
+//  Serial.print(" ");
+//  Serial.print(byte8);
+//  Serial.print(" ");
+//  Serial.print(byte9);
+//  Serial.print(" ");
+//  Serial.print(cTime);
+//  Serial.print(" ");
+//  Serial.println(currentTime, 1);
 
 
   mySerial.write(240);
