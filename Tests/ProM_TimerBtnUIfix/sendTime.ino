@@ -4,8 +4,6 @@ void sendTime() {
   // byte9 ist die "Prüfsumme" byte9 = 254 - (byte4 + byte5 + byte6 + byte7 + byte8)
   // currentTime /18 *1000
   int cTime = ((currentTime * 100) / 18) + 1;
-  Serial.print("cTIME ");
-  Serial.print(currentTime);
   byte byte7 = lowByte(cTime);
   byte byte8 = highByte(cTime);
   byte byte9 = (253 - byte8 - byte7);

@@ -233,6 +233,7 @@ void loop() {
 
         t = ((inData[7] << 8) + inData[6]) * 18;
         ts = t / 1000;
+        Serial.print(inData[3]);
         Serial.print(inData[6]);
         Serial.print(" ");
         Serial.println(ts, 1);

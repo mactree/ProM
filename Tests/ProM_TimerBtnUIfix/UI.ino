@@ -28,7 +28,12 @@ void actualTime() {
   //display.setFont(u8g_font_helvB18); //TODO Remove letters from lib!
   display.setFont(u8g_font_fub17);
   float tt = 0;
-  tt = currentTime;
+  if(grindRunning) {
+    tt = grindTime;
+  }
+  else{
+    tt = currentTime;
+  }
   float ct = tt/10;
   display.setPrintPos(67, 28);
   //display.print(ts,1);  //test only
@@ -39,7 +44,7 @@ void actualTime() {
 void setupMenu() {  //Show Dose Counter! REVERT BACK and PAINT BOX OVER CUPS
       display.setFont(u8g_font_fub14);
       display.drawStr((128 - display.getStrWidth(F("Grind Count:"))) / 2, 26, F("Grind Count:"));
-      display.setPrintPos(5,52);
+      display.setPrintPos(0,52);
       display.print(doseCounter);
       //display.drawStr(0,64,F("by Chris"));
 }

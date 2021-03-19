@@ -54,7 +54,6 @@ void handleDoseButtons(){
     currentTime += 2;  
     lastButtonTime = millis(); 
     sendTime();
-    EEPROM.write(menu, currentTime);
   }
   if (!digitalRead(DECDOSE_PIN)){
      if (inSleep){ //wake up, skip button action
@@ -66,8 +65,7 @@ void handleDoseButtons(){
     currentTime -= 2; 
     lastButtonTime = millis();
     sendTime();
-    EEPROM.write(menu, currentTime);
   }
-
+  EEPROM.write(menu, currentTime);
   return;
 }

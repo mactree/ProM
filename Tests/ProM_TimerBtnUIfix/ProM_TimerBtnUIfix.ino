@@ -57,8 +57,8 @@ U8GLIB_SSD1306_128X64 display(U8G_I2C_OPT_NONE);        // I2C / TWI SCA=a4, SCL
 */
 
 #define LONGPRESS_TIME    2000  // 2s for a long press
-#define SCREEN_ON_TIME  300000//60000//   //5 minutes display on time without button press
-#define GRIND_TIME        20000  //30s for grind in case of dose amount adjustment, 
+#define SCREEN_ON_TIME  30000//300000   //5 minutes display on time without button press
+#define GRIND_TIME        30000  //30s for grind in case of dose amount adjustment, 
 enum { BTN_NONE = 0, BTN_SHORTPRESS, BTN_LONGPRESS, BTN_CONTPRESS };
 
 
@@ -269,8 +269,7 @@ void setup() {
   pinMode(SELECT_PIN, INPUT_PULLUP);
   pinMode(INCDOSE_PIN, INPUT_PULLUP);
   pinMode(DECDOSE_PIN, INPUT_PULLUP);
-  display.setRot180();
-  //display.setContrast(5);
+  display.setContrast(5);
   Serial.begin(9600);
   mySerial.begin(19200);
 
@@ -291,7 +290,6 @@ void setup() {
 //  MsTimer2::start();
 
   lastIdleTime = millis() + 1000;
-  sendTime();
 }
 
 void loop() {
@@ -345,9 +343,6 @@ void loop() {
       }
     }
     if (inData[3] == 160) {
-      currentTime = EEPROM.read(menu);  
-      Serial.print("NEW TIME:"); 
-      Serial.println(currentTime, 2);     
       sendTime();
       //tft.fillScreen(TFT_BLACK);
     }
@@ -358,7 +353,7 @@ void loop() {
         lastButtonTime = millis();
       }
       grindRunning = true; //flag to show grind time in UI
-      currentTime = ts*10-1; //now want to show reduced time. //TODO: TEST
+      grindTime = ts*10; //now want to show reduced time.
       if(!grindPause) { // Only increase doseCounter in 30s intervals to avoid increase counter on short btn press
         doseCounter ++;
         EEPROM.write(4, doseCounter);
@@ -367,14 +362,21 @@ void loop() {
       }     
     }
     else {
-      grindRunning = false;     
+      grindRunning = false;
+//      if (grindTime < 4){//reset time when grinder is not running anymore and time is up
+////        currentTime = EEPROM.read(menu); not needed as currentTime is unchanged
+////        delay(50);
+//        sendTime();// TODO FIX
+//      }
+//      if (grindTime < currentTime && grindTime > 4 && grindPause){//grind process stopped early
+//        currentTime = grindTime;
+//      }
+      
     }
 
-    if(grindPause && currentMillis - grindTimer > GRIND_TIME){ //reset grindPause after GRIND_TIME passed to enable doseconter increase on grinder running
+    if(currentMillis - grindTimer > GRIND_TIME){ //reset grindPause after GRIND_TIME passed to enable doseconter increase on grinder running
       grindPause = false;
       grindTimer = 0;
-      currentTime = EEPROM.read(menu); //set back the timer.
-      sendTime();// TODO: TEST
     }
 
   }
