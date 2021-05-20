@@ -55,6 +55,7 @@ bool updateButtons = true;
 
 bool switchColor = false;
 bool hopperOff = false;
+bool resetScreen = false;
 
 // pause grinding inData[3] == 228
 unsigned long previousPauseMillis = 0;

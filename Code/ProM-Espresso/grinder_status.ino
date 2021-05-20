@@ -27,6 +27,17 @@ void grinderStatus() {
     switchColor = false;
 //    updateMenu = true;
   }
+  // hopper off
+  else if(inData[4] == 8 ){
+    hopperOff = true;
+    updateMenu = true;
+  }
+  // hopper on
+  else if(inData[4] == 0 ){
+    hopperOff = false;
+ //   updateMenu = true;
+  }
+  
   // paused grinding
   else if(inData[3] == 228){
     unsigned long currentPauseMillis = millis();

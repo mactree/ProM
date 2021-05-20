@@ -1,6 +1,6 @@
 void tftShow(){
-
-  if(updateMenu){
+  if(!hopperOff){
+    if(updateMenu){
     // reset variable
     updateMenu = false;
 
@@ -46,7 +46,7 @@ void tftShow(){
 
     }
   }
-  else if(updateTime){
+    else if(updateTime){
     // reset variable
     updateTime = false;
     tft.setTextPadding(60);
@@ -87,7 +87,7 @@ void tftShow(){
       tft.drawNumber(inData[9], 20, 86, 1);
 
   }
-  else if(updateButtons){
+    else if(updateButtons){
     if(!inEditMode){
       tft.drawBitmap( 12, 90, cup_small, cup_small_width,  cup_small_height, TFT_WHITE);
         tft.drawBitmap( 130, 90, cups_small, cups_small_width,  cups_small_height, TFT_WHITE);
@@ -96,6 +96,14 @@ void tftShow(){
         tft.drawBitmap( 10, 90, minus, minus_width,  minus_height, TFT_WHITE);
         tft.drawBitmap( 130, 90, plus, plus_width,  plus_height, TFT_WHITE);
       }
+  }
+  }
+  else{
+    if(!resetScreen){
+      resetScreen = true;
+      tft.fillScreen(TFT_BLACK);
+    }
+    tft.drawBitmap( 58, 25, hopper, hopper_width,  hopper_height, TFT_WHITE);
   }
   
 }
