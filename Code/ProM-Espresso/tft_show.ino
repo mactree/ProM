@@ -12,15 +12,16 @@ void tftShow(){
        
     }
     else{
-        tft.drawFastVLine(82,0,128, TFT_WHITE);
-        tft.drawFastHLine(0,70,164, TFT_WHITE);
+        //
+        //tft.drawFastVLine(82,0,128, TFT_WHITE);
+        //tft.drawFastHLine(0,70,164, TFT_WHITE);
         if(switchColor){
            switch(menu){
             case 1:
               tft.drawBitmap( 58, 25, cup, cup_width,  cup_height, TFT_WHITE);
               break;
             case 2:
-              tft.drawBitmap( 50, 21, cups, cups_width,  cups_height, TFT_WHITE);
+              tft.drawBitmap( 50, 18, cups, cups_width,  cups_height, TFT_WHITE);
               break;
             case 3:
               tft.drawBitmap( 30, 40, portalfilter, portalfilter_width,  portalfilter_height, TFT_WHITE);
@@ -33,7 +34,7 @@ void tftShow(){
               tft.drawBitmap( 58, 25, cup, cup_width,  cup_height, TFT_BLUE);
               break;
             case 2:
-              tft.drawBitmap( 50, 21, cups, cups_width,  cups_height, TFT_BLUE);
+              tft.drawBitmap( 50, 18, cups, cups_width,  cups_height, TFT_BLUE);
               break;
             case 3:
               tft.drawBitmap( 30, 40, portalfilter, portalfilter_width,  portalfilter_height, TFT_BLUE);
@@ -50,8 +51,8 @@ void tftShow(){
     // reset variable
     updateTime = false;
     tft.setTextPadding(60);
-    tft.setTextDatum(TR_DATUM);
-    int poX = 100;
+    tft.setTextDatum(TC_DATUM);
+    int poX = 80;
     int poY = 85;
     int font = 4;
     
@@ -62,7 +63,7 @@ void tftShow(){
       }
       else{
         tft.drawFloat(t/1000, 1, poX, poY, font);  
-        tft.drawNumber(t, 90, 115, 1);          
+        //tft.drawNumber(t, 90, 115, 1);          
       }
     }
     else{
@@ -70,7 +71,9 @@ void tftShow(){
       volatile float dT = doseTime[menu];
       tft.drawFloat(dT /100, 1, poX, poY, font);
     }
-    
+
+      //Debug Info
+      if(showDebug){
       tft.setTextDatum(TR_DATUM);
       tft.setTextPadding(40);
       
@@ -85,25 +88,36 @@ void tftShow(){
       tft.drawNumber(inData[7], 20, 68, 1);
       tft.drawNumber(inData[8], 20, 77, 1);
       tft.drawNumber(inData[9], 20, 86, 1);
-
+      }
+      
   }
     else if(updateButtons){
     if(!inEditMode){
-      tft.drawBitmap( 12, 90, cup_small, cup_small_width,  cup_small_height, TFT_WHITE);
+      tft.drawBitmap( 15, 90, cup_small, cup_small_width,  cup_small_height, TFT_WHITE);
         tft.drawBitmap( 130, 90, cups_small, cups_small_width,  cups_small_height, TFT_WHITE);
       }
     else{
-        tft.drawBitmap( 10, 90, minus, minus_width,  minus_height, TFT_WHITE);
+        tft.drawBitmap( 13, 90, minus, minus_width,  minus_height, TFT_WHITE);
         tft.drawBitmap( 130, 90, plus, plus_width,  plus_height, TFT_WHITE);
       }
   }
   }
   else{
-    if(!resetScreen){
-      resetScreen = true;
+    if(resetScreen){
+      resetScreen = false;
       tft.fillScreen(TFT_BLACK);
     }
-    tft.drawBitmap( 58, 25, hopper, hopper_width,  hopper_height, TFT_WHITE);
+    /*
+    tft.drawFastVLine(82,0,128, TFT_WHITE);
+    tft.drawFastHLine(0,70,164, TFT_WHITE);
+    */
+    tft.drawBitmap( 40, 10, hopper, hopper_width,  hopper_height, TFT_WHITE);
+    tft.drawBitmap( 115, 10, symbol, symbol_width,  symbol_height, TFT_BLUE);
+    // draw version string
+    tft.setTextPadding(0);
+    tft.setTextDatum(TL_DATUM);
+    tft.setTextColor( TFT_BLUE, TFT_BLACK);
+    tft.drawString("HOPPER", 30, 100, 4);
   }
   
 }

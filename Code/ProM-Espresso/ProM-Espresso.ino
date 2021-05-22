@@ -56,6 +56,11 @@ bool updateButtons = true;
 bool switchColor = false;
 bool hopperOff = false;
 bool resetScreen = false;
+bool disableButtons = false;
+
+int inData4_now;
+int inData4_prev;
+
 
 // pause grinding inData[3] == 228
 unsigned long previousPauseMillis = 0;
@@ -71,7 +76,8 @@ int index = -1;
 byte iByte;
 float t = 0;
 
-
+// Debug
+bool showDebug = false;
 
 void setup() {
 
@@ -101,7 +107,7 @@ void setup() {
 
   // draw version string
   tft.setTextColor( TFT_BLUE, TFT_BLACK);
-  tft.drawString("v102.105.015", 40, 80, 2);
+  tft.drawString("v102.105.022", 40, 80, 2);
   delay(1000);
   tft.fillScreen(TFT_BLACK);
 
@@ -122,7 +128,7 @@ void loop() {
 
 
   // shortpress
-  if (btn1Event == BTN1_SHORTPRESS && inData[3] == 164) {
+  if (btn1Event == BTN1_SHORTPRESS && !disableButtons) {
     btn1();
   }
   // shortpress btn1 while inEditMode
@@ -132,16 +138,16 @@ void loop() {
 
   // shortpress cup
   //  else if(btn2Event == BTN2_SHORTPRESS && inData[3] == (164)){
-  else if (btn2Event == BTN2_SHORTPRESS) {
+  else if (btn2Event == BTN2_SHORTPRESS  && !disableButtons) {
     btn2();
   }
   // shortpress double cup
   //  else if(btn3Event == BTN3_SHORTPRESS && inData[3] == (164){
-  else if (btn3Event == BTN3_SHORTPRESS) {
+  else if (btn3Event == BTN3_SHORTPRESS && !disableButtons) {
     btn3();
   }
   // longpress cup or double cup
-  else if (((menu == 1 && btn2Event == BTN2_LONGPRESS) || (menu == 2 && btn3Event == BTN3_LONGPRESS)) && (inData[3] != 167)) {
+  else if (((menu == 1 && btn2Event == BTN2_LONGPRESS) || (menu == 2 && btn3Event == BTN3_LONGPRESS)) && !disableButtons) {
     handleEditMode();
   }
   readSerial();
