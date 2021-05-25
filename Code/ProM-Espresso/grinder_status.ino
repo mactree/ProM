@@ -27,6 +27,7 @@ void grinderStatus() {
     updateTime = true;    
     switchColor = false;
     disableButtons = true;
+    PausedTime = 0;
   }
   // finished grinding
   else if(inData[3] == 165){
@@ -42,7 +43,20 @@ void grinderStatus() {
         switchColor = !switchColor;
         updateMenu = true;
     }
-
+    
+    if (!PausedTime){
+      PausedTime = millis() + 20000;
+    }
+    if (millis() >= PausedTime){
+      
+      grinderDisable();
+      sendTime();
+      switchColor = false;
+      updateMenu = true;
+      updateTime = true;
+      PausedTime = 0;
+    }
+    
   }  
   // hopper off
   if(inData[4] == 8 ){

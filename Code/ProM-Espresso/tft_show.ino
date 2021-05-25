@@ -63,7 +63,7 @@ void tftShow(){
       }
       else{
         tft.drawFloat(t/1000, 1, poX, poY, font);  
-        //tft.drawNumber(t, 90, 115, 1);          
+        //tft.drawNumber(PausedTime, 90, 115, 1);          
       }
     }
     else{
@@ -75,19 +75,19 @@ void tftShow(){
       //Debug Info
       if(showDebug){
       tft.setTextDatum(TR_DATUM);
-      tft.setTextPadding(40);
+      tft.setTextPadding(20);
       
-      tft.drawNumber(inData[0], 20, 3, 1);
-      tft.drawNumber(inData[1], 20, 12, 1);
-      tft.drawNumber(inData[2], 20, 21, 1);
-      tft.drawNumber(inData[3], 20, 30, 1);
-      tft.drawNumber(inData[4], 20, 39, 1);
+      tft.drawNumber(inData[0], 25, 3, 1);
+      tft.drawNumber(inData[1], 25, 12, 1);
+      tft.drawNumber(inData[2], 25, 21, 1);
+      tft.drawNumber(inData[3], 25, 30, 1);
+      tft.drawNumber(inData[4], 25, 39, 1);
       
-      tft.drawNumber(inData[5], 20, 48, 1);
-      tft.drawNumber(inData[6], 20, 57, 1);
-      tft.drawNumber(inData[7], 20, 68, 1);
-      tft.drawNumber(inData[8], 20, 77, 1);
-      tft.drawNumber(inData[9], 20, 86, 1);
+      tft.drawNumber(inData[5], 160, 3, 1);
+      tft.drawNumber(inData[6], 160, 12, 1);
+      tft.drawNumber(inData[7], 160, 21, 1);
+      tft.drawNumber(inData[8], 160, 30, 1);
+      tft.drawNumber(inData[9], 160, 39, 1);
       }
       
   }

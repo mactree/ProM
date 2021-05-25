@@ -21,6 +21,13 @@ unsigned char ucLow ;
     settingSet[SET3] = EEPROM.read(10);
     settingSet[SET4] = EEPROM.read(11);
 
+    // counter
+    counterTimer1 = (EEPROM.get ( 12, ucHigh) << 8) + EEPROM.get ( 13, ucLow);
+    counterTimer2 = (EEPROM.get ( 14, ucHigh) << 8) + EEPROM.get ( 15, ucLow);
+    counterTimer3 = (EEPROM.get ( 16, ucHigh) << 8) + EEPROM.get ( 17, ucLow);
+    counterTotal = (EEPROM.get ( 18, ucHigh) << 8) + EEPROM.get ( 19, ucLow);
+    counterCleaning = (EEPROM.get ( 20, ucHigh) << 8) + EEPROM.get ( 21, ucLow);
+
 
   }
   else {

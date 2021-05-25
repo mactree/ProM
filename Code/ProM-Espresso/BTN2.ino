@@ -1,7 +1,7 @@
 void btn2(){
   if ( !inSetupMode && !inEditMode){
     // normal mode switch to manual gringing
-    menu = DOSE1; 
+    menu = DOSE1;
     // send time
     sendTime(); 
     // write menu to eeprom    

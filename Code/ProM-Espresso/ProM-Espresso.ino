@@ -34,7 +34,7 @@ enum { BTN3_NONE = 0, BTN3_SHORTPRESS, BTN3_LONGPRESS };
 #define SET1                   1 // cleaning alarm
 #define SET2                   2 // counter all
 #define SET3                   3 // counter burs
-#define SET4                   4 // 
+#define SET4                   4 // enable debug
 
 
 
@@ -64,11 +64,18 @@ int inData4_prev;
 
 // pause grinding inData[3] == 228
 unsigned long previousPauseMillis = 0;
-
+unsigned long PausedTime;
 
 // heartbeattimer
 unsigned long previousMillis = 0;
 const long interval = 50;
+
+// grind counter
+unsigned int counterTimer1;
+unsigned int counterTimer2;
+unsigned int counterTimer3;
+unsigned int counterTotal;
+unsigned int counterCleaning;
 
 // serial buffer
 byte inData[10];
@@ -149,6 +156,11 @@ void loop() {
   // longpress cup or double cup
   else if (((menu == 1 && btn2Event == BTN2_LONGPRESS) || (menu == 2 && btn3Event == BTN3_LONGPRESS)) && !disableButtons) {
     handleEditMode();
+  }
+  // longpress cup or double cup
+  else if ((btn1Event == BTN1_LONGPRESS)  && !disableButtons) {
+    showDebug = !showDebug;
+    updateMenu = true;
   }
   readSerial();
 
