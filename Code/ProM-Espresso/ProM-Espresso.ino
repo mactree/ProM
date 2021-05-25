@@ -114,7 +114,7 @@ void setup() {
 
   // draw version string
   tft.setTextColor( TFT_BLUE, TFT_BLACK);
-  tft.drawString("v102.105.022", 40, 80, 2);
+  tft.drawString("v102.105.025", 40, 80, 2);
   delay(1000);
   tft.fillScreen(TFT_BLACK);
 
