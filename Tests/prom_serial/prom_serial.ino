@@ -1,5 +1,5 @@
 #include <SoftwareSerial.h>
-SoftwareSerial mySerial(10, 11, true);  // RX, TX, 
+SoftwareSerial mySerial(2,3, true);  // RX, TX, 
 
 byte inData[15];
 int index= -1;

@@ -100,3 +100,4 @@ Beim Start des Codes wird eine Zeit an die Hauptplatine gesendet, diese Zeit kan
 ### Ziele
 Als Display wird ein 1,8 zoll tft mit ST7735 Chip angestrebt.
 3 Buttons 'Minus' | 'Timer/ Setup' | 'Plus'
+<!-- Is Timer/Setup for changing between single and double, or planned to have more functionality? -->
