@@ -18,34 +18,24 @@
 #include <SoftwareSerial.h>
 
 
+
 // *** BEGIN OF CONFIG SECTION ***
 
 #define MACHINE_NAME      F("ProM")
-
-const byte RELAY_PIN = 7;  // relay pin for controlling motor. pin 8 when using SPI, else change to D12.
-const bool ON = HIGH;    // pin state for acting relay as ON
-const bool OFF = LOW;    // pin state for acting relay as OFF
-
-// rotary encoder must use pin D2 and D3 using UNO / NANO or pin D8 and D9 using LEONARDO / MICRO
-const byte ENCODER_A_PIN = 2;
-const byte ENCODER_B_PIN = 3;
-
-const byte SELECT_BTN_PIN = 4; // pin to use as SELECT button (D4). Might be button of encoder switch
+#define SELECT_PIN 10
+#define INCDOSE_PIN 11
+#define DECDOSE_PIN 12
 
 // Softserial
-SoftwareSerial mySerial(6, 5, true);  // RX, TX,
+SoftwareSerial mySerial(2, 3, true);  // RX, TX,
 
 // *** END OF CONFIG SECTION ***
 
 
-#define EEPROM_VALUE_VERSION   9
+#define EEPROM_VALUE_VERSION   1
 
-#define ADD_GRINDING           0
 #define DOSE1                  1
 #define DOSE2                  2
-#define DOSE3                  3
-
-
 
 U8GLIB_SSD1306_128X64 display(U8G_I2C_OPT_NONE);        // I2C / TWI SCA=a4, SCL=a5 , U8G_I2C_OPT_NONE U8G_I2C_OPT_FAST
 //U8GLIB_SSD1306_128X64 display(U8G_PIN_NONE /*cs*/, 9 /*a0*/, 8 /*reset*/); // SPI HW: cs=10, a0=9, RST=8, MOSI=11, SCK=13 (note: some modules lack cs)
@@ -65,34 +55,33 @@ U8GLIB_SSD1306_128X64 display(U8G_I2C_OPT_NONE);        // I2C / TWI SCA=a4, SCL
 */
 
 #define LONGPRESS_TIME    2000  // 2s for a long press
+#define SCREEN_ON_TIME  60000   //10s for testing, should be changed to >2mins later
 enum { BTN_NONE = 0, BTN_SHORTPRESS, BTN_LONGPRESS };
 
-// encoder: http://playground.arduino.cc/Main/RotaryEncoders
-volatile int encoderPos = 0;
-int lastEncoderPos = 0;
+
 unsigned long lastIdleTime;
 
-volatile byte menu = DOSE1;
-volatile bool relayOn = false;
+volatile byte menu = DOSE2;
 volatile byte currentTime = 0;
-volatile bool updateTime;
+volatile long lastButtonTime;
 bool inSetupMode = false;
+bool inSleep = false;
+bool doublePress = false;
 // interrupt service routine vars
 bool A_set = false;
 bool B_set = false;
-static bool rotating = false;
 
 
 unsigned long previousMillis = 0;
 const long interval = 50;
 
-byte inData[10];
+byte inData[15];
 int index = -1;
 byte iByte;
 float t = 0;
 float ts;
 
-byte doseTime[] = {0, 11, 22, 33}; // time in 1/10s that is value 55 for 5.5s (this is done to prevent the memory consuming and slow usage of float/double)
+byte doseTime[] = {0, 50, 80}; // time in 1/10s that is value 55 for 5.5s (this is done to prevent the memory consuming and slow usage of float/double)
 // NOTE: this implicates that we support a maximum time of 25.5s!!!!!
 
 
@@ -157,28 +146,11 @@ static unsigned char portalfilter[] U8G_PROGMEM = {
 
 
 void setup() {
-  pinMode(RELAY_PIN, OUTPUT);
-  digitalWrite(RELAY_PIN, OFF);
-
-  pinMode(SELECT_BTN_PIN, INPUT);
-  digitalWrite(SELECT_BTN_PIN, HIGH);
-
-  pinMode(ENCODER_A_PIN, INPUT);
-  digitalWrite(ENCODER_A_PIN, HIGH);
-
-  pinMode(ENCODER_B_PIN, INPUT);
-  digitalWrite(ENCODER_B_PIN, HIGH);
-
-  pinMode(ENCODER_A_PIN, INPUT);
-  digitalWrite(ENCODER_A_PIN, HIGH);
-
-  pinMode(ENCODER_B_PIN, INPUT);
-  digitalWrite(ENCODER_B_PIN, HIGH);
-
-  attachInterrupt(0, doEncoderA, CHANGE);
-  attachInterrupt(1, doEncoderB, CHANGE);
-
-  //Serial.begin(9600);
+  pinMode(SELECT_PIN, INPUT);
+  pinMode(INCDOSE_PIN, INPUT);
+  pinMode(DECDOSE_PIN, INPUT);
+  display.setContrast(5);
+  Serial.begin(9600);
   mySerial.begin(19200);
 
   // set display rotation
@@ -196,24 +168,30 @@ void setup() {
 //  MsTimer2::start();
 
   lastIdleTime = millis() + 1000;
+  sendTime();
 }
 
 void loop() {
   delay(10);
-  rotating = true;  // reset the debouncer
-
+  
   // handle button
   byte btnEvent = handleButton();
+  handleDoseButtons();
+  show(actualMenu);
 
-  //
   unsigned long currentMillis = millis();
 
   if (currentMillis - previousMillis >= interval) {
     // save the last time you blinked the LED
     previousMillis = currentMillis;
-
     sendHeartbeat();
   }
+  if (currentMillis - lastButtonTime >= SCREEN_ON_TIME){
+    display.sleepOn(); 
+    inSleep = true;
+  }
+
+  
   while (mySerial.available()) {
     byte iByte = mySerial.read();
 
@@ -221,7 +199,6 @@ void loop() {
       //      Serial.println("start of msg");
       index = 0;
       memset(inData, 0, sizeof(inData));
-
     }
 
     if (index >= 0) {
@@ -233,30 +210,19 @@ void loop() {
 
         t = ((inData[7] << 8) + inData[6]) * 18;
         ts = t / 1000;
-        Serial.print(inData[3]);
-        Serial.print(inData[6]);
-        Serial.print(" ");
+        //Serial.print(inData[6]);
+        //Serial.print(" ");
+        Serial.print("MachineTime: ");
         Serial.println(ts, 1);
         
-        show(actualMenu);
+
         //tft.drawNumber(inData[3], 50, 20, 2);
         //tft.drawFloat(ts, 1, 50, 80, 6);
       }
     }
     if (inData[3] == 160) {
       sendTime();
-      show(actualMenu);
-      //tft.fillScreen(TFT_BLACK);
     }
-  }
-
-  if ((btnEvent == BTN_SHORTPRESS) && !inSetupMode && menu != ADD_GRINDING) {
-    relayOn = !relayOn; // toggle relay state depending on prev state: off -> on or on -> off
-    //if (relayOn)
-    //Serial.println("Start");
-    //else
-    //Serial.println("Pre Stop");
-    lastEncoderPos = encoderPos;
   }
 
 
@@ -277,23 +243,23 @@ void loop() {
 */
   if (inData[3] == 165) {
     // prevents entering setup while relay is on
-    if (updateTime) {
-      updateTime = false;
-      //Serial.println("relayOn");
-      show(actualMenu);
-    }
     lastIdleTime = millis() + 1000;
   }
-  else if (lastEncoderPos != encoderPos) {
-    // prevent changes in the first second afer motor stop
-    if (millis() > lastIdleTime) {
-      encoderChanged(encoderPos > lastEncoderPos);
-      show(actualMenu);
-    }
-    lastEncoderPos = encoderPos;
-  }
-  else if ((btnEvent == BTN_LONGPRESS) && menu != ADD_GRINDING) {
+  else if ((btnEvent == BTN_LONGPRESS)) {//Setup Mode to be activated
     handleSetupMode();
+    show(actualMenu);
+  }
+  else if ((btnEvent == BTN_SHORTPRESS)) {//Toggle Dose Single - Double
+    if (menu == DOSE1){
+      menu = DOSE2;
+      currentTime = EEPROM.read(menu);
+      sendTime();
+    }
+    else if (menu == DOSE2){
+      menu = DOSE1;
+      currentTime = EEPROM.read(menu);
+      sendTime();
+    }
     show(actualMenu);
   }
   /*
